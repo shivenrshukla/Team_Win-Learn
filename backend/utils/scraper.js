@@ -133,7 +133,7 @@ const scrapeMangaSearch = async (keyword) => {
   // Add a delay to look more human
   await delay(Math.floor(Math.random() * 1000) + 500);
   
-  const searchURL = `https://mangafire.to/filter?keyword=${encodeURIComponent(keyword)}`;
+  const searchURL = `https://mangadex.org/search?q=${encodeURIComponent(keyword)}`;
   
   try {
     // Make the request with our configured instance
@@ -363,7 +363,7 @@ const scrapeChapterImages = async (chapterSlug) => {
 // Get manga details and chapters
 const scrapeMangaChapters = async (mangaId) => {
   try {
-    const { data } = await axios.get(`https://mangafire.to/manga/${mangaId}`);
+    const { data } = await axios.get(`https://mangafire.to/read/${mangaId}`);
     const $ = cheerio.load(data);
 
     // Try getting from main selectors
