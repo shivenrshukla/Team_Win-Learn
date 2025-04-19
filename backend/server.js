@@ -16,8 +16,11 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use('/api/topics', require('./routes/topics'));
+app.use('/api/replies', require('./routes/replies'));
 app.use('/api/manga', require('./routes/mangaRoutes'));
 app.use('/api/users',require('./routes/userRoutes'))
+
 const PORT = process.env.PORT || 5002;
 
 app.listen(PORT, () => {
