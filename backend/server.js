@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const ocrRoutes = require('./routes/ocrRoutes');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -20,7 +21,6 @@ app.use('/api/topics', require('./routes/topics'));
 app.use('/api/replies', require('./routes/replies'));
 app.use('/api/manga', require('./routes/mangaRoutes'));
 app.use('/api/users',require('./routes/userRoutes'))
-
 const PORT = process.env.PORT || 5002;
 
 app.listen(PORT, () => {

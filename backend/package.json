@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "puppeteer": "^24.6.1",
+    "tesseract.js": "^6.0.1",
     "user-agents": "^1.1.514"
   }
 }
