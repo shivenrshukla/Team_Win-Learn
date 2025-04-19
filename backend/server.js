@@ -20,7 +20,8 @@ app.use(express.json());
 app.use('/api/topics', require('./routes/topicsRoutes'));
 app.use('/api/replies', require('./routes/replyRoutes'));
 app.use('/api/manga', require('./routes/mangaRoutes'));
-app.use('/api/users',require('./routes/userRoutes'))
+app.use('/api/users',require('./routes/userRoutes'));
+app.use('/api/library',require('./routes/libraryRoutes'));
 const PORT = process.env.PORT || 5002;
 
 app.listen(PORT, () => {
