@@ -1,9 +1,4 @@
-const { 
-  scrapeMangaSearch, 
-  scrapeChapterImages, 
-  scrapeMangaChapters,
-  debugSearchManga
-} = require('../utils/scraper');
+const { scrapeMangaSearch, scrapeChapterImages, scrapeMangaChapters } = require('../utils/scraper');
 
 const searchManga = async (req, res) => {
   const keyword = req.query.keyword;
@@ -40,22 +35,4 @@ const getMangaDetails = async (req, res) => {
   }
 };
 
-const debugSearch = async (req, res) => {
-  const keyword = req.query.keyword;
-  if (!keyword) return res.status(400).json({ error: 'Keyword is required' });
-  
-  try {
-    const debugInfo = await debugSearchManga(keyword);
-    res.json(debugInfo);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: 'Debug failed', message: err.message });
-  }
-};
-
-module.exports = { 
-  searchManga, 
-  readChapter, 
-  getMangaDetails,
-  debugSearch
-};
+module.exports = { searchManga, readChapter, getMangaDetails };
