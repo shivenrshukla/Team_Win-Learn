@@ -4,6 +4,6 @@ const { searchManga, readChapter, getMangaDetails } = require('../controllers/ma
 
 router.get('/search', searchManga);
 router.get('/read/:chapterSlug', readChapter);
-router.get('/manga/:mangaId', getMangaDetails);
+router.get('/:mangaId', getMangaDetails);
 
 module.exports = router;

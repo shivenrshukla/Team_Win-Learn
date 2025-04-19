@@ -362,173 +362,59 @@ const scrapeChapterImages = async (chapterSlug) => {
 
 // Get manga details and chapters
 const scrapeMangaChapters = async (mangaId) => {
-  console.log(`Fetching chapters for manga: ${mangaId}`);
-  
-  // Make sure we have a session
-  await initSession();
-  
-  // Add a delay to look more human
-  await delay(Math.floor(Math.random() * 1000) + 500);
-  
-  const mangaURL = `https://mangafire.to/manga/${mangaId}`;
-  
   try {
-    // Request the manga page
-    const { data } = await axiosInstance.get(mangaURL, {
-      headers: {
-        'Referer': 'https://mangafire.to/'
-      }
-    });
-    
-    // For debugging - save the response
-    const logDir = await ensureLogDir();
-    await fs.writeFile(path.join(logDir, `manga-response-${Date.now()}.html`), data);
-    
-    // Parse with Cheerio
+    const { data } = await axios.get(`https://mangafire.to/manga/${mangaId}`);
     const $ = cheerio.load(data);
-    
-    // Get manga title
-    let mangaTitle = '';
-    for (const titleSelector of [
-      '.manga-title h1', 
-      '.series-name', 
-      '.book-title', 
-      'h1.title'
-    ]) {
-      const el = $(titleSelector);
-      if (el.length > 0) {
-        mangaTitle = el.text().trim();
-        break;
-      }
+
+    // Try getting from main selectors
+    let mangaTitle = $('.manga-title h1').text().trim();
+    let mangaCover = $('.manga-content .thumb img').attr('src');
+    let synopsis = $('div.description').text().trim();
+    let status = $('div.info.paragraph').text().trim();
+    let genres = $('div.genres').map((i, el) => $(el).text().trim()).get();
+
+    // ✅ Fallbacks if above fail
+    if (!mangaTitle) {
+      mangaTitle = $('title').text().replace(/ Manga.*/i, '').trim();
     }
-    
-    // Get manga cover
-    let mangaCover = '';
-    for (const coverSelector of [
-      '.manga-poster img', 
-      '.cover img', 
-      '.book-cover img'
-    ]) {
-      const el = $(coverSelector);
-      if (el.length > 0) {
-        mangaCover = el.attr('src') || el.attr('data-src') || '';
-        break;
-      }
+
+    if (!synopsis) {
+      synopsis = $('meta[name="description"]').attr('content')?.trim() || '';
     }
-    
-    // Get synopsis
-    let synopsis = '';
-    for (const synopsisSelector of [
-      '.manga-synopsis p', 
-      '.description p', 
-      '.summary p'
-    ]) {
-      const el = $(synopsisSelector);
-      if (el.length > 0) {
-        synopsis = el.text().trim();
-        break;
-      }
+
+    if (!mangaCover) {
+      mangaCover = $('meta[property="og:image"]').attr('content')?.trim() || '';
     }
-    
-    // Get chapters
-    const chapters = [];
-    
-    // Try different selectors for chapter list
-    const chapterSelectors = [
-      '.manga-chapters .chapter-item', 
-      '.chapter-list .chapter', 
-      '.chapters-list li'
-    ];
-    
-    for (const selector of chapterSelectors) {
-      $(selector).each((_, element) => {
-        // Find chapter link
-        let chapterLink = null;
-        for (const linkSelector of [
-          '.chapter-title a', 
-          'a.chapter-name', 
-          '.name a', 
-          'a'
-        ]) {
-          const link = $(element).find(linkSelector);
-          if (link.length > 0) {
-            chapterLink = link;
-            break;
-          }
-        }
-        
-        if (chapterLink) {
-          const title = chapterLink.text().trim();
-          const url = new URL(chapterLink.attr('href'), 'https://mangafire.to').toString();
-          
-          // Extract chapter slug
-          let chapterSlug = '';
-          if (url.includes('/read/')) {
-            chapterSlug = url.split('/read/')[1];
-          }
-          
-          // Find chapter number
-          let number = '';
-          for (const numSelector of [
-            '.chapter-number', 
-            '.number', 
-            '.chapter-no'
-          ]) {
-            const numEl = $(element).find(numSelector);
-            if (numEl.length > 0) {
-              number = numEl.text().trim();
-              break;
-            }
-          }
-          
-          // If no number found, try to extract from title
-          if (!number) {
-            const match = title.match(/Chapter\s+(\d+(\.\d+)?)/i);
-            if (match) {
-              number = match[1];
-            }
-          }
-          
-          // Find chapter date
-          let date = '';
-          for (const dateSelector of [
-            '.chapter-date', 
-            '.date', 
-            '.time'
-          ]) {
-            const dateEl = $(element).find(dateSelector);
-            if (dateEl.length > 0) {
-              date = dateEl.text().trim();
-              break;
-            }
-          }
-          
-          chapters.push({
-            title,
-            url,
-            chapterSlug,
-            number,
-            date
-          });
-        }
-      });
-      
-      // If we found chapters, stop trying more selectors
-      if (chapters.length > 0) break;
-    }
-    
-    console.log(`Found ${chapters.length} chapters for manga`);
+
+    // Canonical URL can help verify redirect
+    const canonicalURL = $('link[rel="canonical"]').attr('href');
+    const verifiedSlug = canonicalURL?.split('/manga/')[1];
+
+    // Extract chapters
+    const chapters = $('.list-chapter li').map((i, el) => {
+      const chapterAnchor = $(el).find('a');
+      const chapterTitle = chapterAnchor.text().trim();
+      const chapterUrl = chapterAnchor.attr('href');
+      const chapterId = chapterUrl.split('/').pop();
+      return {
+        id: chapterId,
+        title: chapterTitle,
+      };
+    }).get();
+
     return {
-      mangaTitle,
-      mangaCover,
+      id: mangaId,
+      title: mangaTitle,
+      cover: mangaCover,
       synopsis,
+      status,
+      genres,
+      verifiedSlug,
       chapters,
-      totalChapters: chapters.length
     };
-    
   } catch (error) {
-    console.error('Error fetching manga chapters:', error.message);
-    throw new Error(`Failed to scrape manga chapters: ${error.message}`);
+    console.error(`Error scraping manga ${mangaId}:`, error.message);
+    return null;
   }
 };
 
