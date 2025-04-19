@@ -1,103 +1,46 @@
+// SearchBar.tsx
 import React, { useState } from 'react';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  useColorScheme,
-} from 'react-native';
-import { Search, X } from 'lucide-react-native';
-import Colors from '@/constants/Colors';
+import { View, TextInput, StyleSheet } from 'react-native';
+import Colors from '../app/Color'; // Make sure it's importing correctly
 
-type SearchBarProps = {
+interface SearchBarProps {
   onSearch: (query: string) => void;
-  placeholder?: string;
-};
+}
 
-const SearchBar: React.FC<SearchBarProps> = ({
-  onSearch,
-  placeholder = 'Search manga, authors...',
-}) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'dark'];
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [query, setQuery] = useState('');
 
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    onSearch('');
-  };
-
-  const handleSubmit = () => {
-    onSearch(searchQuery);
+  const handleChange = (text: string) => {
+    setQuery(text);
+    onSearch(text); // Pass the query to the parent component
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.secondaryBackground,
-          borderColor: colors.border,
-        },
-      ]}
-    >
-      <Search
-        size={18}
-        color={colors.secondaryText}
-        style={styles.searchIcon}
-      />
+    <View style={styles.container}>
       <TextInput
-        style={[
-          styles.input,
-          {
-            color: colors.text,
-            fontFamily: 'Inter-Regular',
-          },
-        ]}
-        placeholder={placeholder}
-        placeholderTextColor={colors.secondaryText}
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        onSubmitEditing={handleSubmit}
-        returnKeyType="search"
-        clearButtonMode="never"
-        autoCapitalize="none"
-        autoCorrect={false}
+        value={query}
+        onChangeText={handleChange}
+        placeholder="Search manga..."
+        placeholderTextColor={Colors.light.gray} // Now using the gray color
+        style={styles.input}
       />
-      {searchQuery.length > 0 && (
-        <TouchableOpacity
-          onPress={handleClearSearch}
-          style={styles.clearButton}
-        >
-          <X size={18} color={colors.secondaryText} />
-        </TouchableOpacity>
-      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    height: 44,
     marginHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 8,
-    borderWidth: 1,
-  },
-  searchIcon: {
-    marginRight: 8,
+    marginVertical: 8,
   },
   input: {
-    flex: 1,
-    height: '100%',
-    fontSize: 15,
-  },
-  clearButton: {
-    padding: 4,
+    height: 40,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    borderRadius: 8,
+    paddingLeft: 16,
+    fontSize: 16,
+    color: Colors.light.text,
   },
 });
 
