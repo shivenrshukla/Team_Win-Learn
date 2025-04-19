@@ -2,6 +2,7 @@ export type MangaItem = {
   id: number;
   title: string;
   author: string;
+  images: string[];
   coverImage: string;
   rating: string;
   ratingCount?: string;
