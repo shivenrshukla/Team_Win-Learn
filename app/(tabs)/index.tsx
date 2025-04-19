@@ -1,74 +1,124 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  useColorScheme,
+  RefreshControl,
+  Platform,
+  StatusBar,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import HeaderBar from '@/components/HeaderBar';
+import SearchBar from '@/components/SearchBar';
+import SectionHeader from '@/components/SectionHeader';
+import CategoryPills from '@/components/CategoryPills';
+import MangaGrid from '@/components/MangaGrid';
+import Colors from '@/constants/Colors';
+import { mockMangaData, categories } from '@/utils/mockData';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function DiscoverScreen() {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'dark'];
+  const insets = useSafeAreaInsets();
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-export default function HomeScreen() {
+  const handleSearch = (query: string) => {
+    console.log('Search query:', query);
+    // Implement search functionality
+  };
+
+  const handleSelectCategory = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    // Filter manga by category
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    // Simulate refresh
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
+
+  // Get appropriate manga lists
+  const featuredManga = mockMangaData.slice(0, 5);
+  const popularManga = mockMangaData.slice(5, 11);
+  const newReleases = mockMangaData.slice(12, 18);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <HeaderBar 
+        title="MangaLo" 
+        showSearch={true} 
+        showNotification={true} 
+        onSearchPress={() => {}} 
+      />
+      
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.primary}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        <SearchBar onSearch={handleSearch} />
+        
+        <CategoryPills
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={handleSelectCategory}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        
+        <SectionHeader
+          title="Featured"
+          onSeeAll={() => {
+            // Navigate to see all featured
+          }}
+        />
+        <MangaGrid
+          data={featuredManga}
+          columns={1}
+          cardSize="large"
+        />
+        
+        <SectionHeader
+          title="Popular Now"
+          onSeeAll={() => {
+            // Navigate to see all popular
+          }}
+        />
+        <MangaGrid
+          data={popularManga}
+          showHorizontal={true}
+          cardSize="medium"
+        />
+        
+        <SectionHeader
+          title="New Releases"
+          onSeeAll={() => {
+            // Navigate to see all new releases
+          }}
+        />
+        <MangaGrid
+          data={newReleases}
+          columns={2}
+          cardSize="medium"
+        />
+        
+        <View style={{ height: insets.bottom + 20 }} />
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  container: {
+    flex: 1,
   },
 });

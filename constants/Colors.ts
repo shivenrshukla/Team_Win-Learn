@@ -1,26 +1,37 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+const tintColorLight = '#7E57C2';
+const tintColorDark = '#9575CD';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
-export const Colors = {
+export default {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    primary: '#7E57C2', // Purple
+    secondary: '#26A69A', // Teal
+    accent: '#EC407A', // Pink
+    success: '#4CAF50',
+    warning: '#FFA000',
+    error: '#F44336',
+    background: '#FFFFFF',
+    secondaryBackground: '#F5F5F5',
+    cardBackground: '#FFFFFF',
+    text: '#121212',
+    secondaryText: '#757575',
+    border: '#E0E0E0',
+    tabIconDefault: '#757575',
     tabIconSelected: tintColorLight,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    primary: '#9575CD', // Lighter Purple for dark mode
+    secondary: '#4DB6AC', // Lighter Teal for dark mode
+    accent: '#F06292', // Lighter Pink for dark mode
+    success: '#66BB6A',
+    warning: '#FFB74D',
+    error: '#E57373',
+    background: '#121212',
+    secondaryBackground: '#1E1E1E',
+    cardBackground: '#1E1E1E',
+    text: '#FFFFFF',
+    secondaryText: '#AAAAAA',
+    border: '#2C2C2C',
+    tabIconDefault: '#AAAAAA',
     tabIconSelected: tintColorDark,
   },
 };
