@@ -59,41 +59,24 @@ export default function MangaDetailScreen() {
   
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Animated.View style={[
-        styles.headerBackground,
-        { 
-          backgroundColor: colors.background,
-          opacity: headerOpacity,
-          borderBottomColor: colors.border
-        }
-      ]}>
-        <HeaderBar 
-          title={manga.title}
-          showBack={true}
-          transparent
-        />
+      <Animated.View style={[styles.headerBackground, { backgroundColor: colors.background, opacity: headerOpacity, borderBottomColor: colors.border }]}>
+        <HeaderBar title={manga.title} showBack={true} transparent />
       </Animated.View>
       
-      <HeaderBar 
-        showBack={true}
-        transparent
-      />
-      
       <Animated.ScrollView
-        showsVerticalScrollIndicator={false}
+        horizontal
+        showsHorizontalScrollIndicator={false}
         onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          [{ nativeEvent: { contentOffset: { x: scrollY } } }],
           { useNativeDriver: false }
         )}
         scrollEventThrottle={16}
+        contentContainerStyle={styles.scrollContentContainer}
       >
         <View style={styles.coverContainer}>
           <Animated.Image
             source={{ uri: manga.coverImage }}
-            style={[
-              styles.coverImage,
-              { opacity: coverOpacity, width }
-            ]}
+            style={[styles.coverImage, { opacity: coverOpacity, width }]}
             resizeMode="cover"
           />
           <AnimatedLinearGradient
@@ -104,12 +87,8 @@ export default function MangaDetailScreen() {
         
         <View style={styles.contentContainer}>
           <View style={styles.titleSection}>
-            <Text style={[styles.title, { color: colors.text }]}>
-              {manga.title}
-            </Text>
-            <Text style={[styles.author, { color: colors.secondaryText }]}>
-              {manga.author}
-            </Text>
+            <Text style={[styles.title, { color: colors.text }]}>{manga.title}</Text>
+            <Text style={[styles.author, { color: colors.secondaryText }]}>{manga.author}</Text>
             
             <View style={styles.statsContainer}>
               <View style={styles.statItem}>
@@ -136,8 +115,8 @@ export default function MangaDetailScreen() {
             
             <View style={styles.genreContainer}>
               {(manga.genres || ['Action', 'Adventure', 'Fantasy']).map((genre, index) => (
-                <View 
-                  key={index} 
+                <View
+                  key={index}
                   style={[
                     styles.genreTag,
                     { backgroundColor: colors.secondaryBackground, borderColor: colors.border }
@@ -210,9 +189,7 @@ export default function MangaDetailScreen() {
                   <Text style={[styles.chapterTitle, { color: colors.text }]}>
                     Chapter {chapter}
                   </Text>
-                  <Text style={[styles.chapterDate, { color: colors.secondaryText }]}>
-                    {new Date(Date.now() - chapter * 86400000).toLocaleDateString()}
-                  </Text>
+                  <Text style={[styles.chapterDate, { color: colors.secondaryText }]}>{new Date(Date.now() - chapter * 86400000).toLocaleDateString()}</Text>
                 </View>
                 <ExternalLink size={18} color={colors.secondaryText} />
               </TouchableOpacity>
@@ -231,11 +208,7 @@ export default function MangaDetailScreen() {
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
               Similar Manga
             </Text>
-            <MangaGrid
-              data={similarManga}
-              columns={2}
-              cardSize="medium"
-            />
+            <MangaGrid data={similarManga} columns={2} cardSize="medium" />
           </View>
           
           <View style={{ height: insets.bottom + 20 }} />
@@ -271,9 +244,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
   },
+  scrollContentContainer: {
+    flexDirection: 'row',
+  },
   contentContainer: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    flex: 1,
   },
   titleSection: {
     marginBottom: 20,

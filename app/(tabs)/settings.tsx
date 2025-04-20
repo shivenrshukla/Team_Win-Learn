@@ -118,7 +118,7 @@ export default function SettingsScreen() {
           <SettingsItem
             icon={<Eye size={22} color={colors.secondary} />}
             title="Reading Mode"
-            value="Vertical"
+            value="Horizontal"
             onPress={() => {}}
           />
         </SettingsSection>

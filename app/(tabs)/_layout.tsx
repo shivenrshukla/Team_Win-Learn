@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { View, StyleSheet, useColorScheme } from 'react-native';
+import { View, StyleSheet, useColorScheme, Image } from 'react-native';
 import { Chrome as Home, Book, Heart, Settings } from 'lucide-react-native';
 import Colors from '@/constants/Colors';
 
@@ -13,6 +13,17 @@ export default function TabLayout() {
     height: 60,
     paddingBottom: 8,
   };
+
+  const getTabBarVisibility = (routeName: string): boolean => {
+    return !(routeName === 'manga/[id]' || routeName === 'manga/read/[id]/[chapter]');
+  };
+  // inside TabLayout component
+const scheme = useColorScheme();
+
+const getIcon = (lightIcon: any, darkIcon: any) => {
+  return scheme === 'dark' ? darkIcon : lightIcon;
+};
+
 
   return (
     <Tabs
@@ -62,6 +73,46 @@ export default function TabLayout() {
             <Settings color={color} size={size} />
           ),
         }}
+      />
+      {/* Conditional tab bar visibility for manga/read/[id]/[chapter] */}
+      <Tabs.Screen
+        name="manga/read/[id]/[chapter]"
+        options={({ route }) => ({
+          title: 'Resume reading',
+          tabBarIcon: ({ color, size }) => (
+            <View style={{ width: size, height: size }}>
+              <Image
+          source={
+            getIcon(
+              require('../../assets/images/book_light.png'),
+              require('../../assets/images/book_dark.png')
+            )
+          }
+          style={{ width: '100%', height: '100%' }}
+          />
+            </View>
+          ),
+          tabBarStyle: getTabBarVisibility(route.name) ? tabBarStyle : { display: 'none' },
+        })}
+      />
+      <Tabs.Screen
+        name="manga/[id]"
+        options={({ route }) => ({
+          title: 'Read Manga',
+          tabBarIcon: ({ color, size }) => (
+            <View style={{ width: size, height: size }}>
+              <Image
+          source={
+            getIcon(
+              require('../../assets/images/m_light.png'),
+              require('../../assets/images/m_dark.png')
+            )
+          }
+          style={{ width: '100%', height: '100%' }}
+          />
+            </View>
+          )
+        })}
       />
     </Tabs>
   );
