@@ -7,6 +7,8 @@ import SectionHeader from '@/components/SectionHeader';
 import MangaGrid from '@/components/MangaGrid';
 import Colors from '@/constants/Colors';
 import { mockMangaData, categories } from '@/utils/mockData';
+import { Image } from 'react-native';
+import logo from '../../assets/images/logo.png';
 
 export default function DiscoverScreen() {
   const colorScheme = useColorScheme();
@@ -54,7 +56,21 @@ export default function DiscoverScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <HeaderBar title="MangaLo" showSearch={true} showNotification={true} />
+      <HeaderBar
+  logo={
+    <Image
+      source={logo}
+      style={{
+        width: 150,          // Increase size
+        height: 90,          // Adjust proportionally
+        resizeMode: 'contain',
+        marginLeft: -50,     // Move slightly to the left
+      }}
+    />
+  }
+  showSearch={true}
+  showNotification={true}
+/>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <SearchBar onSearch={handleSearch} />

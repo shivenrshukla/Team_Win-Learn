@@ -14,6 +14,7 @@ import Colors from '@/constants/Colors';
 
 type HeaderBarProps = {
   title?: string;
+  logo?: React.ReactNode;
   showBack?: boolean;
   showSearch?: boolean;
   showNotification?: boolean;
@@ -26,6 +27,7 @@ type HeaderBarProps = {
 
 const HeaderBar: React.FC<HeaderBarProps> = ({
   title,
+  logo,
   showBack = false,
   showSearch = false,
   showNotification = false,
@@ -50,28 +52,19 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
     <View style={[styles.container, headerStyle, { paddingTop: statusBarHeight }]}>
       <View style={styles.leftSection}>
         {showBack && (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => router.back()}
-          >
-            <ArrowLeft
-              size={24}
-              color={transparent ? '#FFFFFF' : colors.text}
-            />
+          <TouchableOpacity style={styles.iconButton} onPress={() => router.back()}>
+            <ArrowLeft size={24} color={transparent ? '#FFFFFF' : colors.text} />
           </TouchableOpacity>
         )}
         {showMenu && (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={onMenuPress}
-          >
-            <MenuIcon
-              size={24}
-              color={transparent ? '#FFFFFF' : colors.text}
-            />
+          <TouchableOpacity style={styles.iconButton} onPress={onMenuPress}>
+            <MenuIcon size={24} color={transparent ? '#FFFFFF' : colors.text} />
           </TouchableOpacity>
         )}
-        {title && (
+
+        {logo ? (
+          <View style={styles.logoContainer}>{logo}</View>
+        ) : title ? (
           <Text
             style={[
               styles.title,
@@ -81,30 +74,18 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
           >
             {title}
           </Text>
-        )}
+        ) : null}
       </View>
 
       <View style={styles.rightSection}>
         {showSearch && (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={onSearchPress}
-          >
-            <Search
-              size={22}
-              color={transparent ? '#FFFFFF' : colors.text}
-            />
+          <TouchableOpacity style={styles.iconButton} onPress={onSearchPress}>
+            <Search size={22} color={transparent ? '#FFFFFF' : colors.text} />
           </TouchableOpacity>
         )}
         {showNotification && (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={onNotificationPress}
-          >
-            <Bell
-              size={22}
-              color={transparent ? '#FFFFFF' : colors.text}
-            />
+          <TouchableOpacity style={styles.iconButton} onPress={onNotificationPress}>
+            <Bell size={22} color={transparent ? '#FFFFFF' : colors.text} />
           </TouchableOpacity>
         )}
       </View>
@@ -117,7 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 88, // Includes status bar height
+    height: 88,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
   },
@@ -134,6 +115,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-SemiBold',
     fontSize: 18,
     marginLeft: 8,
+  },
+  logoContainer: {
+    marginLeft: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   iconButton: {
     padding: 4,

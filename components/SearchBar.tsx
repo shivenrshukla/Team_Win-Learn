@@ -1,6 +1,5 @@
-// SearchBar.tsx
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet, useColorScheme } from 'react-native';
 import Colors from '../app/Color'; // Make sure it's importing correctly
 
 interface SearchBarProps {
@@ -9,6 +8,7 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [query, setQuery] = useState('');
+  const colorScheme = useColorScheme(); // Detect current theme (light or dark)
 
   const handleChange = (text: string) => {
     setQuery(text);
@@ -21,8 +21,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         value={query}
         onChangeText={handleChange}
         placeholder="Search manga..."
-        placeholderTextColor={Colors.light.gray} // Now using the gray color
-        style={styles.input}
+        placeholderTextColor={colorScheme === 'dark' ? Colors.dark.gray : Colors.light.gray} // Adjust placeholder color based on theme
+        style={[styles.input, { color: colorScheme === 'dark' ? Colors.dark.text : Colors.light.text }]} // Adjust text color based on theme
       />
     </View>
   );
@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingLeft: 16,
     fontSize: 16,
-    color: Colors.light.text,
   },
 });
 
 export default SearchBar;
+
